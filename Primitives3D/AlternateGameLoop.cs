@@ -4,11 +4,13 @@ namespace Primitives3D
 {
 	public class AlternateGameLoop
 	{
+		private readonly Renderer _renderer;
 		private readonly SemaphoreSlim _semaphore;
 		private World _world;
 
 		public AlternateGameLoop(Renderer renderer, SemaphoreSlim semaphore)
 		{
+			_renderer = renderer;
 			_semaphore = semaphore;
 			_world = new World(renderer);
 		}
@@ -17,10 +19,9 @@ namespace Primitives3D
 		{
 			while (true)
 			{
-				// :)
-				_semaphore.Wait();
-				Update();
-				_semaphore.Release();
+				if(_renderer.CanAcceptCommands() )
+					Update();
+				
 			}
 		}
 

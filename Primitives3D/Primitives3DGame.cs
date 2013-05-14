@@ -101,10 +101,6 @@ namespace Primitives3D
 
 		protected override void Draw(GameTime gameTime)
 		{
-			_semaphore.Wait(0);
-			_renderer.SwitchBuffers();
-			_semaphore.Release();
-
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			if (_isWireframe)

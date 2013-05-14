@@ -37,6 +37,8 @@ namespace Primitives3D
 			{
 				_renderer.AddCube(primitive);
 			}
+			_renderer.EndFrame();
+
 		}
 	}
 }
