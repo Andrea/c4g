@@ -7,10 +7,8 @@
 //-----------------------------------------------------------------------------
 #endregion
 
-#region Using Statements
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-#endregion
 
 namespace Primitives3D
 {
@@ -23,10 +21,6 @@ namespace Primitives3D
         public Vector3 Position;
         public Vector3 Normal;
 
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         public VertexPositionNormal(Vector3 position, Vector3 normal)
         {
             Position = position;
@@ -45,7 +39,7 @@ namespace Primitives3D
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
-            get { return VertexPositionNormal.VertexDeclaration; }
+            get { return VertexDeclaration; }
         }
 
     }

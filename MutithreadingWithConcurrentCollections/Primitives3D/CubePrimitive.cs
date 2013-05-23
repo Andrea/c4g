@@ -7,10 +7,8 @@
 //-----------------------------------------------------------------------------
 #endregion
 
-#region Using Statements
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-#endregion
 
 namespace Primitives3D
 {
@@ -22,8 +20,7 @@ namespace Primitives3D
         /// <summary>
         /// Constructs a new cube primitive, using default settings.
         /// </summary>
-        public CubePrimitive(GraphicsDevice graphicsDevice)
-            : this(graphicsDevice, 1)
+        public CubePrimitive(GraphicsDevice graphicsDevice) : this(graphicsDevice, 1)
         {
         }
 
@@ -48,8 +45,8 @@ namespace Primitives3D
             foreach (Vector3 normal in normals)
             {
                 // Get two vectors perpendicular to the face normal and to each other.
-                Vector3 side1 = new Vector3(normal.Y, normal.Z, normal.X);
-                Vector3 side2 = Vector3.Cross(normal, side1);
+                var side1 = new Vector3(normal.Y, normal.Z, normal.X);
+                var side2 = Vector3.Cross(normal, side1);
 
                 // Six indices (two triangles) per face.
                 AddIndex(CurrentVertex + 0);

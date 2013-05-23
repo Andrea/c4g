@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +9,7 @@ namespace Primitives3D
 {
 	public class Primitives3DGame : Game
 	{
-		private const int NumPrimitiveObjects = 1000;
+		private const int NumPrimitiveObjects = 100;
 		GraphicsDeviceManager _graphics;
 
 		SpriteBatch _spriteBatch;
@@ -45,27 +44,25 @@ namespace Primitives3D
 
 		// Are we rendering in wireframe mode?
 		bool _isWireframe;
-		private Task<AlternateGameLoop> _threadedGameLoopTask;
+		private Task _threadedGameLoopTask;
 		private Renderer _renderer;
-		private SemaphoreSlim _semaphore;
+		
 
 		public Primitives3DGame()
 		{
 			Content.RootDirectory = "Content";
-			_graphics = new GraphicsDeviceManager(this){SynchronizeWithVerticalRetrace = false};
+			_graphics = new GraphicsDeviceManager(this) { SynchronizeWithVerticalRetrace = false, PreferMultiSampling = true};
 			IsFixedTimeStep = false;
-			
+			IsMouseVisible = true;
 		}
 		protected override void Initialize()
 		{
 			base.Initialize();
-			_semaphore = new SemaphoreSlim(1);
 			_renderer = new Renderer();
 			_threadedGameLoopTask = Task.Factory.StartNew(() =>
 			{
-				var gl = new AlternateGameLoop(_renderer, _semaphore);
+				var gl = new AlternateGameLoop(_renderer);
 				gl.Loop();
-				return gl;
 			});
 		}
 
@@ -81,11 +78,10 @@ namespace Primitives3D
 					{
 						Position = new Vector3(random.Next(100) - 50, random.Next(100) - 50, -random.Next(100))
 					};
-				
 				_primitives.Add(primitive);
 			}
 
-			_wireFrameState = new RasterizerState()
+			_wireFrameState = new RasterizerState
 			{
 				FillMode = FillMode.WireFrame,
 				CullMode = CullMode.None,
@@ -95,7 +91,6 @@ namespace Primitives3D
 		protected override void Update(GameTime gameTime)
 		{
 			HandleInput();
-
 			base.Update(gameTime);
 		}
 
@@ -104,37 +99,16 @@ namespace Primitives3D
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			if (_isWireframe)
-			{
 				GraphicsDevice.RasterizerState = _wireFrameState;
-			}
 			else
-			{
 				GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-			}
-			
-			// Create camera matrices, making the object spin.
-			float time = (float)gameTime.TotalGameTime.TotalSeconds;
+			var cameraPosition = new Vector3(0, 0, 2.5f);
+			var aspect = GraphicsDevice.Viewport.AspectRatio;
 
-			float yaw = time * 0.4f;
-			float pitch = time * 0.7f;
-			float roll = time * 1.1f;
+			var view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
+			var projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 1000);
 
-			Vector3 cameraPosition = new Vector3(0, 0, 2.5f);
-
-			float aspect = GraphicsDevice.Viewport.AspectRatio;
-
-			Matrix world = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
-			Matrix view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
-			Matrix projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 1000);
-			
 			_renderer.Draw(GraphicsDevice, view, projection);
-			
-			Color color = colors[_currentColorIndex];
-
-//			for (var i = 0; i < NumPrimitiveObjects; i++)
-//			{
-//				_primitives[i].Draw(world * Matrix.CreateTranslation(_primitives[i].Position), view, projection, color);
-//			}
 
 			// Reset the fill mode renderstate.
 			GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
@@ -147,7 +121,7 @@ namespace Primitives3D
 
 			base.Draw(gameTime);
 		}
-		
+
 		void HandleInput()
 		{
 			_lastKeyboardState = _currentKeyboardState;
@@ -173,8 +147,7 @@ namespace Primitives3D
 			{
 				_currentPrimitiveIndex = (_currentPrimitiveIndex + 1) % _primitives.Count;
 			}
-
-
+			
 			// Change color?
 			Rectangle botLeftOfScreen = new Rectangle(0, halfHeight, halfWidth, halfHeight);
 			if (IsPressed(Keys.B, Buttons.B) || LeftMouseIsPressed(botLeftOfScreen))
@@ -193,10 +166,8 @@ namespace Primitives3D
 
 		bool IsPressed(Keys key, Buttons button)
 		{
-			return (_currentKeyboardState.IsKeyDown(key) &&
-					_lastKeyboardState.IsKeyUp(key)) ||
-				   (_currentGamePadState.IsButtonDown(button) &&
-					_lastGamePadState.IsButtonUp(button));
+			return (_currentKeyboardState.IsKeyDown(key) && _lastKeyboardState.IsKeyUp(key)) ||
+				   (_currentGamePadState.IsButtonDown(button) && _lastGamePadState.IsButtonUp(button));
 		}
 
 		bool LeftMouseIsPressed(Rectangle rect)
@@ -211,7 +182,7 @@ namespace Primitives3D
 	{
 		static void Main()
 		{
-			using (Primitives3DGame game = new Primitives3DGame())
+			using (var game = new Primitives3DGame())
 			{
 				game.Run();
 

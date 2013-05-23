@@ -6,7 +6,7 @@ namespace Primitives3D
 {
 	public class World
 	{
-		private Renderer _renderer;
+		private readonly Renderer _renderer;
 		private IList<Cube> _primitives;
 
 		public World(Renderer renderer)
@@ -31,10 +31,11 @@ namespace Primitives3D
 			}
 		}
 
-		public void Update(int elapsedMilliseconds)
+		public void Update(long elapsedMilliseconds)
 		{
 			foreach (var primitive in _primitives)
 			{
+				primitive.Rotation += new Vector3(0.10f, 0.1f, 0.03f) *(elapsedMilliseconds / 1000.0f);
 				_renderer.AddCube(primitive);
 			}
 			_renderer.EndFrame();
