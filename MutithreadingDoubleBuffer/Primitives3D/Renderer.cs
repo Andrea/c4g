@@ -9,8 +9,10 @@ namespace Primitives3D
 	public class Renderer
 	{
 		private readonly AutoResetEvent _autoResetEvent;
-		private IList<RenderCommand> _bufferedRenderCommandsA;
+		private List<RenderCommand> _bufferedRenderCommandsA;
 		private List<RenderCommand> _bufferedRenderCommandsB;
+		private List<RenderCommand> _updatingRenderCommands;
+		private List<RenderCommand> _drawingRenderCommands;
 		private List<RenderCommand> _lastRenderCommands;
 		private ConcurrentQueue<RenderCommand[]> _concurrentRenderCommandsThatRepresentAFrame;
 
