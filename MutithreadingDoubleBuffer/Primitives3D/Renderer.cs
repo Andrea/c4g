@@ -9,16 +9,18 @@ namespace Primitives3D
 	public class Renderer
 	{
 		private readonly AutoResetEvent _autoResetEvent;
-		private List<RenderCommand> _bufferedRenderCommandsA;
-		private List<RenderCommand> _bufferedRenderCommandsB;
+		private readonly List<RenderCommand> _bufferedRenderCommandsA;
+		private readonly List<RenderCommand> _bufferedRenderCommandsB;
 		private List<RenderCommand> _updatingRenderCommands;
 		private List<RenderCommand> _drawingRenderCommands;
-		private List<RenderCommand> _lastRenderCommands;
+		private readonly List<RenderCommand> _lastRenderCommands;
 
 
 		private CubePrimitive _cubePrimitive;
 
 		static readonly object Locker = new object();
+		private bool _isFirstFrame;
+
 		public Renderer(AutoResetEvent autoResetEvent)
 		{
 			_autoResetEvent = autoResetEvent;
@@ -26,6 +28,7 @@ namespace Primitives3D
 			_bufferedRenderCommandsB = new List<RenderCommand>();
 			_lastRenderCommands = new List<RenderCommand>();
 			_updatingRenderCommands = _bufferedRenderCommandsA;
+			_isFirstFrame = true;
 		}
 
 		public void AddCube(Cube primitive)
@@ -42,26 +45,35 @@ namespace Primitives3D
 				{
 					_updatingRenderCommands = _bufferedRenderCommandsB;
 					_drawingRenderCommands = _bufferedRenderCommandsA;
+					
 				}
 				else if (_updatingRenderCommands == _bufferedRenderCommandsB)
 				{
 					_updatingRenderCommands = _bufferedRenderCommandsA;
 					_drawingRenderCommands = _bufferedRenderCommandsB;
+					
 				}
+				_lastRenderCommands.Clear();
+				_lastRenderCommands.AddRange(_drawingRenderCommands);
 			}
+			if(!_isFirstFrame)
+				_autoResetEvent.WaitOne();
+			_isFirstFrame = false;
 		}
 
 		public void Draw(GraphicsDevice device, Matrix view, Matrix projection)
 		{
 			_cubePrimitive = _cubePrimitive ?? new CubePrimitive(device);
-			
-			Console.WriteLine("Draw call renderCommands count: {0}", _drawingRenderCommands.Count);
+
+			Console.WriteLine("Draw call renderCommands count: {0}", _lastRenderCommands.Count);
+			RenderCommand[] something;
 			lock (Locker)
 			{
-				_lastRenderCommands.Clear();
-				_lastRenderCommands.AddRange(_drawingRenderCommands);
+				something = new RenderCommand[_lastRenderCommands.Count];
+				_lastRenderCommands.CopyTo(something);
 			}
-			foreach (var renderingRenderCommand in _lastRenderCommands)
+
+			foreach (var renderingRenderCommand in something)
 			{
 				_cubePrimitive.Draw(renderingRenderCommand.World, view, projection, renderingRenderCommand.Color);
 			}

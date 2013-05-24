@@ -35,11 +35,10 @@ namespace Primitives3D
 		{
 			foreach (var primitive in _primitives)
 			{
-				primitive.Rotation += new Vector3(0.10f, 0.1f, 0.13f) *(elapsedMilliseconds / 1000.0f);
+				primitive.Rotation += new Vector3(1.510f, 1.5f, 1.513f) *(elapsedMilliseconds / 1000.0f);
 				_renderer.AddCube(primitive);
 			}
 			_renderer.EndFrame();
-
 		}
 	}
 }

@@ -64,7 +64,7 @@ namespace Primitives3D
 			_renderer = new Renderer(_autoResetEvent);
 			_threadedGameLoopTask = Task.Factory.StartNew(() =>
 			{
-				var gl = new AlternateGameLoop(_renderer, _autoResetEvent);
+				var gl = new AlternateGameLoop(_renderer);
 				gl.Loop();
 			});
 		}
