@@ -10,6 +10,7 @@ namespace Primitives3D
 		private readonly World _world;
 		private Stopwatch _stopwatch;
 		private long _lastElapsed;
+		private bool _isFirstFrame;
 
 		public AlternateGameLoop(Renderer renderer, AutoResetEvent autoResetEvent)
 		{
@@ -17,6 +18,7 @@ namespace Primitives3D
 			_autoResetEvent = autoResetEvent;
 			_world = new World(renderer);
 			_stopwatch = new Stopwatch();
+			_isFirstFrame = true;
 		}
 
 		public void Loop()
@@ -30,14 +32,16 @@ namespace Primitives3D
 
 		private void Update()
 		{
-			if (!_renderer.CanAcceptCommands()) 
+			if (!_renderer.CanAcceptCommands())
 				return;
-			
+
 			var elapsedMilliseconds = _stopwatch.ElapsedMilliseconds;
 			var elapsed = elapsedMilliseconds - _lastElapsed;
 			_lastElapsed = elapsedMilliseconds;
 			_world.Update(elapsed);
-			_autoResetEvent.WaitOne();
+			if (!_isFirstFrame)
+				_autoResetEvent.WaitOne();
+			_isFirstFrame = false;
 		}
 	}
 }

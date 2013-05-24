@@ -105,13 +105,11 @@ namespace Primitives3D
 				GraphicsDevice.RasterizerState = _wireFrameState;
 			else
 				GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+
 			var cameraPosition = new Vector3(0, 0, 2.5f);
 			var aspect = GraphicsDevice.Viewport.AspectRatio;
-
 			var view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
 			var projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 1000);
-
-			
 			_renderer.Draw(GraphicsDevice, view, projection);
 			
 			// Reset the fill mode renderstate.

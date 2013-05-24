@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Xna.Framework;
@@ -14,51 +14,59 @@ namespace Primitives3D
 		private List<RenderCommand> _updatingRenderCommands;
 		private List<RenderCommand> _drawingRenderCommands;
 		private List<RenderCommand> _lastRenderCommands;
-		private ConcurrentQueue<RenderCommand[]> _concurrentRenderCommandsThatRepresentAFrame;
+
 
 		private CubePrimitive _cubePrimitive;
-		private SemaphoreSlim _semaphoreSlim;
-		static readonly object _locker = new object();
+
+		static readonly object Locker = new object();
 		public Renderer(AutoResetEvent autoResetEvent)
 		{
 			_autoResetEvent = autoResetEvent;
-			_bufferedRenderCommandsA = _bufferedRenderCommandsB = new List<RenderCommand>();
+			_bufferedRenderCommandsA = new List<RenderCommand>();
+			_bufferedRenderCommandsB = new List<RenderCommand>();
 			_lastRenderCommands = new List<RenderCommand>();
-			_concurrentRenderCommandsThatRepresentAFrame = new ConcurrentQueue<RenderCommand[]>();
-			_semaphoreSlim = new SemaphoreSlim(1);
+			_updatingRenderCommands = _bufferedRenderCommandsA;
 		}
 
-		//NOTE: Not very generic at all but it does what we need it to do
 		public void AddCube(Cube primitive)
 		{
 			var translation = Matrix.CreateFromYawPitchRoll(primitive.Rotation.X, primitive.Rotation.Y, primitive.Rotation.Z) * Matrix.CreateTranslation(primitive.Position);
-			_bufferedRenderCommandsA.Add(new RenderCommand { Color = primitive.Color, Radius = primitive.Radius, World = translation });
+			_updatingRenderCommands.Add(new RenderCommand { Color = primitive.Color, Radius = primitive.Radius, World = translation });
 		}
 
 		public void EndFrame()
 		{
-			lock (_locker)
+			lock (Locker)
 			{
-				_bufferedRenderCommandsB.AddRange(_bufferedRenderCommandsA);
-				_bufferedRenderCommandsA.Clear();
+				if (_updatingRenderCommands == _bufferedRenderCommandsA)
+				{
+					_updatingRenderCommands = _bufferedRenderCommandsB;
+					_drawingRenderCommands = _bufferedRenderCommandsA;
+				}
+				else if (_updatingRenderCommands == _bufferedRenderCommandsB)
+				{
+					_updatingRenderCommands = _bufferedRenderCommandsA;
+					_drawingRenderCommands = _bufferedRenderCommandsB;
+				}
 			}
 		}
 
 		public void Draw(GraphicsDevice device, Matrix view, Matrix projection)
 		{
 			_cubePrimitive = _cubePrimitive ?? new CubePrimitive(device);
-			_lastRenderCommands.Clear();
-			lock (_locker)
+			
+			Console.WriteLine("Draw call renderCommands count: {0}", _drawingRenderCommands.Count);
+			lock (Locker)
 			{
-				_lastRenderCommands.AddRange(_bufferedRenderCommandsB);
-				_bufferedRenderCommandsB.Clear();				
+				_lastRenderCommands.Clear();
+				_lastRenderCommands.AddRange(_drawingRenderCommands);
 			}
-
-			_autoResetEvent.Set();
 			foreach (var renderingRenderCommand in _lastRenderCommands)
 			{
 				_cubePrimitive.Draw(renderingRenderCommand.World, view, projection, renderingRenderCommand.Color);
 			}
+			_autoResetEvent.Set();			
+			_drawingRenderCommands.Clear();
 		}
 
 		//NOTE: not sure about this 
