@@ -8,4 +8,9 @@ namespace Primitives3D
 		public Color Color { get; set; }
 		public Matrix World { get; set; }
 	}
+
+	public class Constants
+	{
+		public static int CubeCount = 1000;
+	}
 }

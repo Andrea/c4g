@@ -44,7 +44,7 @@ namespace Primitives3D
 
 		// Are we rendering in wireframe mode?
 		bool _isWireframe;
-		private Task _threadedGameLoopTask;
+		
 		private Renderer _renderer;
 		
 
@@ -59,9 +59,9 @@ namespace Primitives3D
 		{
 			base.Initialize();
 			_renderer = new Renderer();
-			_threadedGameLoopTask = Task.Factory.StartNew(() =>
+			Task.Factory.StartNew(() =>
 			{
-				var gl = new AlternateGameLoop(_renderer);
+				var gl = new UpdateLoop(_renderer);
 				gl.Loop();
 			});
 		}

@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Xna.Framework;
@@ -6,28 +5,24 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Primitives3D
 {
-	public class Renderer
+	public class Renderer 
 	{
 		private List<RenderCommand> _updatingRenderCommands;
 		private List<RenderCommand> _renderingRenderCommands;
-		private List<RenderCommand> _bufferedRenderCommandsA;
-		private List<RenderCommand> _bufferedRenderCommandsB;
+		private readonly List<RenderCommand> _bufferedRenderCommandsA;
+		private readonly List<RenderCommand> _bufferedRenderCommandsB;
 
 		private CubePrimitive _cubePrimitive;
-		private List<RenderCommand> _lastRenderCommands;
+		private readonly List<RenderCommand> _lastRenderCommands;
 
 		private AutoResetEvent _renderActive;
 		private AutoResetEvent _renderComandsReady;
 		private AutoResetEvent _renderCompleted;
-		private List<RenderCommand>[] _renderCommands;
 
 		public Renderer()
 		{
 			_lastRenderCommands = new List<RenderCommand>();
-
-			_renderCommands = new List<RenderCommand>[2];
-			_renderCommands[0]= new List<RenderCommand>();
-			_renderCommands[1]= new List<RenderCommand>();
+		
 			
 			_bufferedRenderCommandsA = new List<RenderCommand>();
 			_bufferedRenderCommandsB = new List<RenderCommand>();

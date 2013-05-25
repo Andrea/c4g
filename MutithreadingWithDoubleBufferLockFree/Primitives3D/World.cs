@@ -19,7 +19,7 @@ namespace Primitives3D
 		{
 			_primitives = new List<Cube>();
 			var random = new Random();
-			for (int i = 0; i < 1000; i++)
+			for (int i = 0; i < Constants.CubeCount; i++)
 			{
 				_primitives.Add(new Cube
 					{
