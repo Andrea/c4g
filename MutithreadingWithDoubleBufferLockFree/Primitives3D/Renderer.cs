@@ -18,7 +18,7 @@ namespace Primitives3D
 		private ManualResetEvent _renderComandsReady;
 		private ManualResetEvent _renderCompleted;
 
-		public Renderer()
+		public Renderer(GraphicsDevice device)
 		{
 			_bufferedRenderCommandsA = new List<RenderCommand>();
 			_bufferedRenderCommandsB = new List<RenderCommand>();
@@ -28,6 +28,7 @@ namespace Primitives3D
 
 			_renderActive = new ManualResetEvent(false);
 			_renderCompleted = new ManualResetEvent(true);
+			_cubePrimitive = _cubePrimitive ?? new CubePrimitive(device);
 		}
 
 		public void AddCube(Cube primitive)
@@ -53,7 +54,7 @@ namespace Primitives3D
 			_renderActive.WaitOne();
 		}
 		
-		public void Draw(GraphicsDevice device, Matrix view, Matrix projection)
+		public void Draw(Matrix view, Matrix projection)
 		{
 			_renderActive.Reset();
 			_renderCompleted.Set();
@@ -63,8 +64,7 @@ namespace Primitives3D
 			_renderComandsReady.Reset();
 			SwapBuffers();
 			_renderActive.Set();
-
-			_cubePrimitive = _cubePrimitive ?? new CubePrimitive(device);
+			
 			foreach (var renderingRenderCommand in _renderingRenderCommands)
 			{
 				_cubePrimitive.Draw(renderingRenderCommand.World, view, projection, renderingRenderCommand.Color);

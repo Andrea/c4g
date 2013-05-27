@@ -58,7 +58,7 @@ namespace Primitives3D
 		protected override void Initialize()
 		{
 			base.Initialize();
-			_renderer = new Renderer();
+			_renderer = new Renderer(GraphicsDevice);
 			Task.Factory.StartNew(() =>
 			{
 				var gl = new UpdateLoop(_renderer);
@@ -106,7 +106,7 @@ namespace Primitives3D
 			var view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
 			var projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 1000);
 
-			_renderer.Draw(GraphicsDevice, view, projection);
+			_renderer.Draw(view, projection);
 
 			// Reset the fill mode renderstate.
 			GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
