@@ -13,17 +13,13 @@ namespace Primitives3D
 		private readonly List<RenderCommand> _bufferedRenderCommandsB;
 
 		private CubePrimitive _cubePrimitive;
-		private readonly List<RenderCommand> _lastRenderCommands;
-
+		
 		private AutoResetEvent _renderActive;
 		private AutoResetEvent _renderComandsReady;
 		private AutoResetEvent _renderCompleted;
 
 		public Renderer()
 		{
-			_lastRenderCommands = new List<RenderCommand>();
-		
-			
 			_bufferedRenderCommandsA = new List<RenderCommand>();
 			_bufferedRenderCommandsB = new List<RenderCommand>();
 			_updatingRenderCommands = _bufferedRenderCommandsA;
@@ -56,7 +52,7 @@ namespace Primitives3D
 			_renderActive.Set();
 
 			_cubePrimitive = _cubePrimitive ?? new CubePrimitive(device);
-			foreach (var renderingRenderCommand in _lastRenderCommands)
+			foreach (var renderingRenderCommand in _renderingRenderCommands)
 			{
 				_cubePrimitive.Draw(renderingRenderCommand.World, view, projection, renderingRenderCommand.Color);
 			}
@@ -79,8 +75,6 @@ namespace Primitives3D
 				_updatingRenderCommands = _bufferedRenderCommandsA;
 				_renderingRenderCommands = _bufferedRenderCommandsB;
 			}
-			_lastRenderCommands.Clear();
-			_lastRenderCommands.AddRange(_renderingRenderCommands);
 			_updatingRenderCommands.Clear();
 		}
 	}

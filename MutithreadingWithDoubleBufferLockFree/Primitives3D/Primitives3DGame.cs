@@ -98,10 +98,8 @@ namespace Primitives3D
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			if (_isWireframe)
-				GraphicsDevice.RasterizerState = _wireFrameState;
-			else
-				GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+			GraphicsDevice.RasterizerState = _isWireframe ? _wireFrameState : RasterizerState.CullCounterClockwise;
+
 			var cameraPosition = new Vector3(0, 0, 2.5f);
 			var aspect = GraphicsDevice.Viewport.AspectRatio;
 
@@ -116,7 +114,6 @@ namespace Primitives3D
 			_spriteBatch.Begin();
 			Profiler.DrawStats(_spriteBatch, _spriteFont);
 			_spriteBatch.End();
-
 			Profiler.Clear();
 
 			base.Draw(gameTime);
