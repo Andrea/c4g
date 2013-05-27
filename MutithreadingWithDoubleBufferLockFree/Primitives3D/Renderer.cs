@@ -14,9 +14,9 @@ namespace Primitives3D
 
 		private CubePrimitive _cubePrimitive;
 		
-		private AutoResetEvent _renderActive;
-		private AutoResetEvent _renderComandsReady;
-		private AutoResetEvent _renderCompleted;
+		private ManualResetEvent _renderActive;
+		private ManualResetEvent _renderComandsReady;
+		private ManualResetEvent _renderCompleted;
 
 		public Renderer()
 		{
@@ -24,18 +24,26 @@ namespace Primitives3D
 			_bufferedRenderCommandsB = new List<RenderCommand>();
 			_updatingRenderCommands = _bufferedRenderCommandsA;
 
-			_renderComandsReady = new AutoResetEvent(false);
+			_renderComandsReady = new ManualResetEvent(false);
 
-			_renderActive = new AutoResetEvent(false);
-			_renderCompleted = new AutoResetEvent(true);
+			_renderActive = new ManualResetEvent(false);
+			_renderCompleted = new ManualResetEvent(true);
 		}
 
 		public void AddCube(Cube primitive)
 		{
-			var translation = Matrix.CreateFromYawPitchRoll(primitive.Rotation.X, primitive.Rotation.Y, primitive.Rotation.Z) *
+			var translation = Matrix.CreateFromYawPitchRoll(
+									primitive.Rotation.X, 
+									primitive.Rotation.Y, 
+									primitive.Rotation.Z) *
 							  Matrix.CreateTranslation(primitive.Position);
 
-			_updatingRenderCommands.Add(new RenderCommand { Color = primitive.Color, Radius = primitive.Radius, World = translation });
+			_updatingRenderCommands.Add(new RenderCommand
+				                            {
+					                            Color = primitive.Color, 
+												Radius = primitive.Radius, 
+												World = translation
+				                            });
 		}
 
 		public void EndFrame()
@@ -47,7 +55,12 @@ namespace Primitives3D
 		
 		public void Draw(GraphicsDevice device, Matrix view, Matrix projection)
 		{
+			_renderActive.Reset();
+			_renderCompleted.Set();
+			_renderComandsReady.WaitOne();
+
 			_renderCompleted.Reset();
+			_renderComandsReady.Reset();
 			SwapBuffers();
 			_renderActive.Set();
 
@@ -56,14 +69,11 @@ namespace Primitives3D
 			{
 				_cubePrimitive.Draw(renderingRenderCommand.World, view, projection, renderingRenderCommand.Color);
 			}
-			_renderActive.Reset();
-			_renderCompleted.Set();
-			_renderComandsReady.WaitOne();
 		}
 
 		private void SwapBuffers()
 		{
-			_renderComandsReady.Reset();
+			
 			if (_updatingRenderCommands == _bufferedRenderCommandsA)
 			{
 				_updatingRenderCommands = _bufferedRenderCommandsB;
