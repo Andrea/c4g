@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Flow;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Primitives3D
 {
@@ -24,6 +25,8 @@ namespace Primitives3D
 
 		private Color _colour;
 		private int _currentColourIndex;
+		private IFuture<bool> _aPressed;
+		private KeyboardState _lastState;
 
 		public World(Renderer renderer)
 		{
@@ -45,7 +48,6 @@ namespace Primitives3D
 						Rotation = Vector3.Zero
 					});
 			}
-
 			_kernel = Create.NewKernel();
 			_stopwatch = new Stopwatch();
 			_stopwatch.Start();
@@ -58,32 +60,50 @@ namespace Primitives3D
 		{
 			foreach (var primitive in _primitives)
 			{
-				primitive.Rotation += new Vector3(1.0f, 10.0f, 1.0f) *(elapsedMilliseconds / 1000.0f);
+				primitive.Rotation += new Vector3(1.0f, 10.0f, 1.0f) * (elapsedMilliseconds / 1000.0f);
 				primitive.Color = _colour;
 				_renderer.AddCube(primitive);
 			}
+			
+			var keyboardState = Keyboard.GetState();
+			
+			if (keyboardState.IsKeyDown(Keys.A) && _lastState.IsKeyUp(Keys.A))
+			{
+				_aPressed.Value = true;
+				_aPressed.Complete();
+			}
+			_lastState = keyboardState;
+
 			_kernel.Step();
 		}
 
-		private IEnumerator<bool> ChangeColour(IGenerator t0)
+		private IEnumerator<bool> ChangeColour(IGenerator self)
 		{
+			var trigger = self.Factory.NewTrigger();
+			trigger.Add(APressed());
+			yield return self.ResumeAfter(trigger);
 
 			while (true)
 			{
-
 				_colour = _colours[_currentColourIndex];
 
 				_currentColourIndex++;
 				if (_currentColourIndex >= 4)
 					_currentColourIndex = 0;
 
-				yield return t0.ResumeAfter(TimeSpan.FromSeconds(5));
+				yield return self.ResumeAfter(TimeSpan.FromSeconds(5));
 			}
+		}
+
+		private ITransient APressed()
+		{
+			_aPressed = _kernel.Factory.NewFuture<bool>();
+			return _aPressed;
 		}
 
 		private IEnumerator<int> ChangePosition(IGenerator self)
 		{
-			while(true)
+			while (true)
 			{
 				foreach (var primitive in _primitives)
 				{

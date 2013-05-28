@@ -184,6 +184,7 @@ namespace Primitives3D
 
 			// Draw the model, using BasicEffect.
 			Draw(_basicEffect);
+			
 		}
 	}
 }
