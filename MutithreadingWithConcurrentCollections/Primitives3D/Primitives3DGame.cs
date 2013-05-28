@@ -21,22 +21,9 @@ namespace Primitives3D
         // store a wireframe rasterize state
         RasterizerState _wireFrameState;
 
-        // Store a list of tint colors, plus which one is currently selected.
-        List<Color> colors = new List<Color>
-        {
-            Color.Red,
-            Color.Green,
-            Color.Blue,
-            Color.White,
-            Color.Black,
-        };
-
-        int _currentColorIndex = 0;
-
         // Are we rendering in wireframe mode?
         bool _isWireframe;
         private Renderer _renderer;
-
 
         public Primitives3DGame()
         {
@@ -45,6 +32,7 @@ namespace Primitives3D
             IsFixedTimeStep = false;
             IsMouseVisible = true;
         }
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -116,11 +104,12 @@ namespace Primitives3D
 
             // Change primitive?
             var viewport = GraphicsDevice.Viewport;
-            int halfWidth = viewport.Width / 2;
-            int halfHeight = viewport.Height / 2;
+            var halfWidth = viewport.Width / 2;
+            var halfHeight = viewport.Height / 2;
 
             // Toggle wireframe?
             var botRightOfScreen = new Rectangle(halfWidth, halfHeight, halfWidth, halfHeight);
+            
             if (IsPressed(Keys.Y, Buttons.Y) || LeftMouseIsPressed(botRightOfScreen))
             {
                 _isWireframe = !_isWireframe;
