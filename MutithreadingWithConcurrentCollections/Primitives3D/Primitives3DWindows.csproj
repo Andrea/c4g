@@ -48,7 +48,7 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AlternateGameLoop.cs" />
+    <Compile Include="UpdateLoop.cs" />
     <Compile Include="Cube.cs" />
     <Compile Include="CubePrimitive.cs" />
     <Compile Include="GeometricPrimitive.cs" />
