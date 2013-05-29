@@ -23,7 +23,6 @@ namespace Primitives3D
 
 		private Color _colour;
 		private int _currentColourIndex;
-		private KeyboardState _lastState;
 		private IEnumerator<int> _positionAndColourCoordinator;
 		private IEnumerator<bool> _changePositionCoroutine;
 		private IEnumerator<bool> _changeColourCoroutine;
@@ -32,10 +31,10 @@ namespace Primitives3D
 		public World(Renderer renderer)
 		{
 			_renderer = renderer;
-			Initialise();
+			Initialize();
 		}
 
-		public void Initialise()
+		public void Initialize()
 		{
 			_primitives = new List<Cube>();
 			var random = new Random();
