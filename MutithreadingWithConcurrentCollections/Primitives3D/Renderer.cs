@@ -8,26 +8,30 @@ namespace Primitives3D
 	public class Renderer
 	{
 		private IList<RenderCommand> _updatingRenderCommands;
-		private IList<RenderCommand> _renderingRenderCommands;
-
+		
 		private ConcurrentQueue<RenderCommand[]> _concurrentRenderCommandsThatRepresentAFrame;
 
 		private CubePrimitive _cubePrimitive;
 		private RenderCommand[] _lastRenderCommands;
 
-		public Renderer()
+		public Renderer(GraphicsDevice device)
 		{
-
 			_updatingRenderCommands = new List<RenderCommand>();
 			_lastRenderCommands = new RenderCommand[]{};
 			_concurrentRenderCommandsThatRepresentAFrame = new ConcurrentQueue<RenderCommand[]>();
+            _cubePrimitive = _cubePrimitive ?? new CubePrimitive(device);
+
 		}
 
 		public void AddCube(Cube primitive)
 		{
 			var translation = Matrix.CreateFromYawPitchRoll(primitive.Rotation.X, primitive.Rotation.Y, primitive.Rotation.Z) * Matrix.CreateTranslation(primitive.Position);
-			_updatingRenderCommands.Add(
-				new RenderCommand { Color = primitive.Color, Radius = primitive.Radius, World = translation });
+			_updatingRenderCommands.Add(new RenderCommand
+			                                {
+			                                    Color = primitive.Color, 
+                                                Radius = primitive.Radius, 
+                                                World = translation
+			                                });
 		}
 
 		public void EndFrame()
@@ -38,9 +42,8 @@ namespace Primitives3D
 			_updatingRenderCommands.Clear();
 		}
 		
-		public void Draw(GraphicsDevice device, Matrix view, Matrix projection)
+		public void Draw(Matrix view, Matrix projection)
 		{
-			_cubePrimitive = _cubePrimitive ?? new CubePrimitive(device);
 			RenderCommand[] renderCommands;
 			if (_concurrentRenderCommandsThatRepresentAFrame.TryDequeue(out renderCommands))
 			{
@@ -55,7 +58,7 @@ namespace Primitives3D
 
 		public bool CanAcceptCommands()
 		{
-			return _concurrentRenderCommandsThatRepresentAFrame.Count < 3;
+			return _concurrentRenderCommandsThatRepresentAFrame.Count < 2;
 		}
 	}
 }
