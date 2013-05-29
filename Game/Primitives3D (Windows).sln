@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Primitives3DWindows", "Primitives3D\Primitives3DWindows.csproj", "{32848D49-90A9-4289-9418-B336042FB82C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Primitives3DContent", "Primitives3DContent\Primitives3DContent.contentproj", "{992363D7-8E0E-4743-B4C6-60C501D75374}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{32848D49-90A9-4289-9418-B336042FB82C}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{32848D49-90A9-4289-9418-B336042FB82C}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{32848D49-90A9-4289-9418-B336042FB82C}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{32848D49-90A9-4289-9418-B336042FB82C}.Debug|x86.ActiveCfg = Debug|x86
+		{32848D49-90A9-4289-9418-B336042FB82C}.Debug|x86.Build.0 = Debug|x86
+		{32848D49-90A9-4289-9418-B336042FB82C}.Release|Any CPU.ActiveCfg = Release|x86
+		{32848D49-90A9-4289-9418-B336042FB82C}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{32848D49-90A9-4289-9418-B336042FB82C}.Release|Mixed Platforms.Build.0 = Release|x86
+		{32848D49-90A9-4289-9418-B336042FB82C}.Release|x86.ActiveCfg = Release|x86
+		{32848D49-90A9-4289-9418-B336042FB82C}.Release|x86.Build.0 = Release|x86
+		{992363D7-8E0E-4743-B4C6-60C501D75374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{992363D7-8E0E-4743-B4C6-60C501D75374}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{992363D7-8E0E-4743-B4C6-60C501D75374}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{992363D7-8E0E-4743-B4C6-60C501D75374}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{992363D7-8E0E-4743-B4C6-60C501D75374}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{992363D7-8E0E-4743-B4C6-60C501D75374}.Release|x86.ActiveCfg = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
