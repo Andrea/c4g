@@ -59,16 +59,4 @@ namespace Primitives3D
 			base.Draw(gameTime);
 		}
 	}
-
-	static class Program
-	{
-		static void Main()
-		{
-			using (var game = new Primitives3DGame())
-			{
-				game.Run();
-
-			}
-		}
-	}
 }
