@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -101,8 +100,7 @@ namespace Primitives3D
             {
                 Exit();
             }
-
-            // Change primitive?
+            
             var viewport = GraphicsDevice.Viewport;
             var halfWidth = viewport.Width / 2;
             var halfHeight = viewport.Height / 2;

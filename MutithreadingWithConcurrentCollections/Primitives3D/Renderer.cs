@@ -12,15 +12,13 @@ namespace Primitives3D
 		private ConcurrentQueue<RenderCommand[]> _concurrentRenderCommandsThatRepresentAFrame;
 
 		private CubePrimitive _cubePrimitive;
-		private RenderCommand[] _lastRenderCommands;
+		
 
 		public Renderer(GraphicsDevice device)
 		{
 			_updatingRenderCommands = new List<RenderCommand>();
-			_lastRenderCommands = new RenderCommand[]{};
 			_concurrentRenderCommandsThatRepresentAFrame = new ConcurrentQueue<RenderCommand[]>();
             _cubePrimitive = _cubePrimitive ?? new CubePrimitive(device);
-
 		}
 
 		public void AddCube(Cube primitive)
@@ -45,12 +43,12 @@ namespace Primitives3D
 		public void Draw(Matrix view, Matrix projection)
 		{
 			RenderCommand[] renderCommands;
-			if (_concurrentRenderCommandsThatRepresentAFrame.TryDequeue(out renderCommands))
+			if (!_concurrentRenderCommandsThatRepresentAFrame.TryDequeue(out renderCommands))
 			{
-				_lastRenderCommands = renderCommands;
+				return;
 			}
-
-			foreach (var renderingRenderCommand in _lastRenderCommands)
+		    
+			foreach (var renderingRenderCommand in renderCommands)
 			{
 				_cubePrimitive.Draw(renderingRenderCommand.World, view, projection, renderingRenderCommand.Color);
 			}

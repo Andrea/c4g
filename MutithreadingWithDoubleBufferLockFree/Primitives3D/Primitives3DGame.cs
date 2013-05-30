@@ -22,33 +22,15 @@ namespace Primitives3D
 		MouseState _currentMouseState;
 		MouseState _lastMouseState;
 
-		// Store a list of primitive models, plus which one is currently selected.
-		readonly List<GeometricPrimitive> _primitives = new List<GeometricPrimitive>();
-
-		int _currentPrimitiveIndex = 0;
-
 		// store a wireframe rasterize state
 		RasterizerState _wireFrameState;
-
-		// Store a list of tint colors, plus which one is currently selected.
-		List<Color> colors = new List<Color>
-        {
-            Color.Red,
-            Color.Green,
-            Color.Blue,
-            Color.White,
-            Color.Black,
-        };
-
-		int _currentColorIndex = 0;
 
 		// Are we rendering in wireframe mode?
 		bool _isWireframe;
 		
 		private Renderer _renderer;
 		
-
-		public Primitives3DGame()
+        public Primitives3DGame()
 		{
 			Content.RootDirectory = "Content";
 			_graphics = new GraphicsDeviceManager(this) { SynchronizeWithVerticalRetrace = false, PreferMultiSampling = true};
@@ -70,17 +52,7 @@ namespace Primitives3D
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 			_spriteFont = Content.Load<SpriteFont>("hudfont");
-
-			var random = new Random(Environment.TickCount);
-			for (int i = 0; i < NumPrimitiveObjects; i++)
-			{
-				var primitive = new CubePrimitive(GraphicsDevice)
-					{
-						Position = new Vector3(random.Next(100) - 50, random.Next(100) - 50, -random.Next(100))
-					};
-				_primitives.Add(primitive);
-			}
-
+            
 			_wireFrameState = new RasterizerState
 			{
 				FillMode = FillMode.WireFrame,
@@ -139,20 +111,7 @@ namespace Primitives3D
 			Viewport viewport = GraphicsDevice.Viewport;
 			int halfWidth = viewport.Width / 2;
 			int halfHeight = viewport.Height / 2;
-			var topOfScreen = new Rectangle(0, 0, viewport.Width, halfHeight);
-			if (IsPressed(Keys.A, Buttons.A) || LeftMouseIsPressed(topOfScreen))
-			{
-				_currentPrimitiveIndex = (_currentPrimitiveIndex + 1) % _primitives.Count;
-			}
 			
-			// Change color?
-			Rectangle botLeftOfScreen = new Rectangle(0, halfHeight, halfWidth, halfHeight);
-			if (IsPressed(Keys.B, Buttons.B) || LeftMouseIsPressed(botLeftOfScreen))
-			{
-				_currentColorIndex = (_currentColorIndex + 1) % colors.Count;
-			}
-
-
 			// Toggle wireframe?
 			Rectangle botRightOfScreen = new Rectangle(halfWidth, halfHeight, halfWidth, halfHeight);
 			if (IsPressed(Keys.Y, Buttons.Y) || LeftMouseIsPressed(botRightOfScreen))
