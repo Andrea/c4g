@@ -10,12 +10,7 @@ _dotCover.*
 *~
 *.swp
 *.cachefile
-NucleusContent.contentproj.user
-assets
-build
-!src/CargoJack.Tests/Build
-content
-!src/CargoJack.Engine/content
+*.contentproj.user
 *.user
 cachefile*.*
 src/packages
