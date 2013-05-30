@@ -28,7 +28,7 @@ namespace Primitives3D
 		private int _currentColourIndex;
 		private IFuture<bool> _aPressed;
 		private KeyboardState _lastState;
-	    private IChannel<int> _channel;
+	    private IChannel<bool> _channel;
 
 	    public World(Renderer renderer)
 		{
@@ -51,13 +51,14 @@ namespace Primitives3D
 					});
 			}
 			_kernel = Create.NewKernel();
-		    _channel = _kernel.Factory.NewChannel<int>();
+		    _channel = _kernel.Factory.NewChannel<bool>();
 			_stopwatch = new Stopwatch();
 			_stopwatch.Start();
 			_colour = Color.Beige;
 			
 			_kernel.Factory.NewCoroutine(ChangePosition);
 			_kernel.Factory.NewCoroutine(ChangeColour);
+		    
 		}
 
 		public void Update(long elapsedMilliseconds)
@@ -73,8 +74,7 @@ namespace Primitives3D
 			
 			if (keyboardState.IsKeyDown(Keys.A) && _lastState.IsKeyUp(Keys.A))
 			{
-				_aPressed.Value = true;
-				_aPressed.Complete();
+                _channel.Insert(true);
 			}
 			_lastState = keyboardState;
 
@@ -83,7 +83,10 @@ namespace Primitives3D
 
 		private IEnumerator<bool> ChangeColour(IGenerator self)
 		{
-			while (true)
+		    IFuture<bool> extract = _channel.Extract();
+		    yield return self.ResumeAfter(extract);
+
+		    while (true)
 			{
 				_colour = _colours[_currentColourIndex];
 
@@ -97,6 +100,7 @@ namespace Primitives3D
 
 		private IEnumerator<bool> ChangePosition(IGenerator self)
 		{
+            
 			while (true)
 			{
 				foreach (var primitive in _primitives)
