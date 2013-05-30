@@ -31,11 +31,7 @@ namespace Primitives3D
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 			_spriteFont = Content.Load<SpriteFont>("hudfont");
 
-			_wireFrameState = new RasterizerState
-			{
-				FillMode = FillMode.WireFrame,
-				CullMode = CullMode.None,
-			};
+			
 		}
 
 		protected override void Update(GameTime gameTime)
@@ -47,8 +43,6 @@ namespace Primitives3D
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
-
-			GraphicsDevice.RasterizerState = _isWireframe ? _wireFrameState : RasterizerState.CullCounterClockwise;
 
 			var cameraPosition = new Vector3(0, 0, 2.5f);
 			var aspect = GraphicsDevice.Viewport.AspectRatio;

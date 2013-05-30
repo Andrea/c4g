@@ -38,7 +38,7 @@ namespace Primitives3D
 			var output = "";
 			foreach (var profileData in _profiles)
 			{
-				output += profileData.Value.Name + ":" + ((float)profileData.Value.ElapsedTime / Stopwatch.Frequency) + "s\n";
+				output += profileData.Value.Name + ":" + ((float)profileData.Value.ElapsedTime * 1000/ Stopwatch.Frequency).ToString("0.000000") + " ms\n";
 			}
 
 			spriteBatch.DrawString(spriteFont,  output, new Vector2(48, 48), Color.White);

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Flow;
@@ -27,8 +28,9 @@ namespace Primitives3D
 		private int _currentColourIndex;
 		private IFuture<bool> _aPressed;
 		private KeyboardState _lastState;
+	    private IChannel<int> _channel;
 
-		public World(Renderer renderer)
+	    public World(Renderer renderer)
 		{
 			_renderer = renderer;
 			Initialise();
@@ -49,9 +51,11 @@ namespace Primitives3D
 					});
 			}
 			_kernel = Create.NewKernel();
+		    _channel = _kernel.Factory.NewChannel<int>();
 			_stopwatch = new Stopwatch();
 			_stopwatch.Start();
 			_colour = Color.Beige;
+			
 			_kernel.Factory.NewCoroutine(ChangePosition);
 			_kernel.Factory.NewCoroutine(ChangeColour);
 		}
@@ -79,10 +83,6 @@ namespace Primitives3D
 
 		private IEnumerator<bool> ChangeColour(IGenerator self)
 		{
-			var trigger = self.Factory.NewTrigger();
-			trigger.Add(APressed());
-			yield return self.ResumeAfter(trigger);
-
 			while (true)
 			{
 				_colour = _colours[_currentColourIndex];
@@ -93,15 +93,9 @@ namespace Primitives3D
 
 				yield return self.ResumeAfter(TimeSpan.FromSeconds(5));
 			}
-		}
+		}        
 
-		private ITransient APressed()
-		{
-			_aPressed = _kernel.Factory.NewFuture<bool>();
-			return _aPressed;
-		}
-
-		private IEnumerator<int> ChangePosition(IGenerator self)
+		private IEnumerator<bool> ChangePosition(IGenerator self)
 		{
 			while (true)
 			{
@@ -110,7 +104,7 @@ namespace Primitives3D
 					Matrix transform = Matrix.CreateRotationY(0.001f);
 					primitive.Position = Vector3.Transform(primitive.Position, transform);
 				}
-				yield return 0;
+				yield return true;
 			}
 		}
 	}
