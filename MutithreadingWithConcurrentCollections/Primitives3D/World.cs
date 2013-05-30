@@ -7,7 +7,7 @@ namespace Primitives3D
 	public class World
 	{
 		private readonly Renderer _renderer;
-		private IList<Cube> _primitives;
+		private IList<Cube> _cubes;
 
 		public World(Renderer renderer)
 		{
@@ -17,11 +17,11 @@ namespace Primitives3D
 
 		public void Initialise()
 		{
-			_primitives = new List<Cube>();
+			_cubes = new List<Cube>();
 			var random = new Random();
 			for (int i = 0; i < 1000; i++)
 			{
-				_primitives.Add(new Cube
+				_cubes.Add(new Cube
 					{
 						Color = Color.Red,
 						Position = new Vector3(random.Next(100) - 50, random.Next(100) - 50, -random.Next(100)),
@@ -33,10 +33,10 @@ namespace Primitives3D
 
 		public void Update(long elapsedMilliseconds)
 		{
-			foreach (var primitive in _primitives)
+			foreach (var cube in _cubes)
 			{
-				primitive.Rotation += new Vector3(1.10f, 1.1f, 1.03f) *(elapsedMilliseconds / 1000.0f);
-				_renderer.AddCube(primitive);
+				cube.Rotation += new Vector3(1.10f, 1.1f, 1.03f) *(elapsedMilliseconds / 1000.0f);
+				_renderer.AddCube(cube);
 			}
 			_renderer.EndFrame();
 		}
