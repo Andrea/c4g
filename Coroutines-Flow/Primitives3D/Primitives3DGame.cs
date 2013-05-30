@@ -1,27 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Flow;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Primitives3D
 {
 	public class Primitives3DGame : Game
 	{
-		private const int NumPrimitiveObjects = 100;
 		GraphicsDeviceManager _graphics;
 		SpriteBatch _spriteBatch;
-		SpriteFont _spriteFont;
-
-		
-		// store a wireframe rasterize state
-		RasterizerState _wireFrameState;
-
-		bool _isWireframe;
-
+		SpriteFont _spriteFont;		
 		private Renderer _renderer;
 		private World _world;
 		
@@ -44,16 +30,6 @@ namespace Primitives3D
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 			_spriteFont = Content.Load<SpriteFont>("hudfont");
-
-			//			var random = new Random(Environment.TickCount);
-			//			for (int i = 0; i < NumPrimitiveObjects; i++)
-			//			{
-			//				var primitive = new CubePrimitive(GraphicsDevice)
-			//					{
-			//						Position = new Vector3(random.Next(100) - 50, random.Next(100) - 50, -random.Next(100))
-			//					};
-			//				_primitives.Add(primitive);
-			//			}
 
 			_wireFrameState = new RasterizerState
 			{
